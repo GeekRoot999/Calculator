@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculator</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="Calculator_icon.svg.png" rel="icon" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            --bg: #EAECEE;
+            --bg-box: white;
+            --button-bg: #E6EAECEE;
+            --button-clr: black;
+            --operator-bg: #EF25E2;
+            --equal-bg: #17D38F;
+            --clear-bg: #D8552F;
+            --display-clr: white;
+            --display-bg: black;
+        }
+
+        html[data-theme='dark'] {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            --bg: rgb(66, 65, 65);
+            --bg-box: #080808;
+            --button-bg: #505458;
+            --button-clr: white;
+            --operator-bg: #EF25E2;
+            --equal-bg: #17D38F;
+            --clear-bg: #D8552F;
+            --display-bg: white;
+            --display-clr: black;
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            display: grid;
+            justify-items: center;
+            align-content: center;
+            position: relative;
+            background: var(--bg);
+        }
+
+        .toggler {
+            position: absolute;
+            top: 2%;
+            right: 2%;
+            color: var(--button-clr);
+        }
+
+        [type="checkbox"] {
+            visibility: hidden;
+        }
+
+        label {
+            cursor: pointer;
+            display: block;
+            width: 52px;
+            height: 27px;
+            background: grey;
+            border-radius: 100px;
+            position: relative;
+            margin-left: 2.5rem;
+        }
+
+        label:after {
+            content: "";
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            background: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            transition: 1s;
+        }
+
+        input:checked+label {
+            background: black;
+        }
+
+        input:checked+label:after {
+            left: calc(100% - 2px);
+            transform: translateX(-100%);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 70px);
+            grid-template-rows: minmax(100px, auto) repeat(5, 70px);
+            background: var(--bg-box);
+            padding: 1rem;
+            grid-gap: 1rem;
+            text-align: center;
+            box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.4), 1px 1px 13px 1px rgba(0, 0, 0, 0.4);
+        }
+
+        .display {
+            grid-column: 1/5;
+            background: var(--display-bg);
+            color: var(--display-clr);
+            display: flex;
+            flex-flow: column;
+            justify-content: space-around;
+        }
+
+        .previousoperand {
+            opacity: 0.8;
+            font-size: 0.8rem;
+            color: var(--button-bg);
+            align-self: flex-end;
+        }
+
+        .currentoperand {
+            color: var(--button-clr);
+            align-self: flex-end;
+            color: var(--button-bg);
+        }
+
+        .equal,
+        .all-clear {
+            grid-column-end: span 2;
+        }
+
+        .button {
+            background: var(--button-bg);
+            opacity: 0.8;
+            color: var(--button-clr);
+            border-radius: 15px;
+            padding-top: calc(70px - 35px - 0.5rem);
+        }
+
+        .button:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .operator {
+            background: var(--operator-bg);
+        }
+
+        .equal {
+            background: var(--equal-bg);
+        }
+
+        .all-clear {
+            background: var(--clear-bg);
+        }
+
+        html.transition,
+        html.transition *,
+        html.transition *:before,
+        html.transition *:after {
+            transition: all 750ms !important;
+            transition-delay: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="toggler">
+        <h4>Light/Dark mode</h4>
+
+        <input type="checkbox" class="checkbox-1" id="checkbox1" name="theme" /> <label for="checkbox1"
+            class="label-1 "> </label>
+    </div>
+
+    <div class="grid-container">
+        <input type="text" id="calcdisplay" class="display">
+        <div class="button all-clear">AC</div>
+        <div class="button del">DEL</div>
+        <div class="button operator" onclick="operation_button_click(this)" id="plus">+</div>
+        <div class="button" onclick="number_button_click(this)">1</div>
+        <div class="button" onclick="number_button_click(this)">2</div>
+        <div class="button" onclick="number_button_click(this)">3</div>
+        <div class="button operator" id="minus" onclick="operation_button_click(this)">-</div>
+        <div class="button" onclick="number_button_click(this)">4</div>
+        <div class="button" onclick="number_button_click(this)">5</div>
+        <div class="button" onclick="number_button_click(this)">6</div>
+        <div class="button operator" onclick="operation_button_click(this)" id="mult">*</div>
+        <div class="button" onclick="number_button_click(this)">7</div>
+        <div class="button" onclick="number_button_click(this)">8</div>
+        <div class="button" onclick="number_button_click(this)">9</div>
+        <div class="button operator" onclick="operation_button_click(this)" id="div">÷</div>
+        <div class="button" onclick="number_button_click(this)">0</div>
+        <div class="button" onclick="number_button_click()" id="dotoperator">.</div>
+        <div class="button equal" id="equal">=</div>
+
+        <!-- <div class="button operator" id="plus" data-operator>+</div>
+        <input type="button" class="button" onclick="number_button_click(this)" value="1">
+        <input type="button" class="button" onclick="number_button_click(this)" value="2">
+        <input type="button" class="button" onclick="number_button_click(this)" value="3">
+        <div class="button operator" id="minus" data-operator>-</div>
+        <input type="button" class="button" onclick="number_button_click(this)" value="4">
+        <input type="button" class="button" onclick="number_button_click(this)" value="5">
+        <input type="button" class="button" onclick="number_button_click(this)" value="6">
+        <div class="button operator" id="mult" data-operator>*</div>
+        <input type="button" class="button" onclick="number_button_click(this)" value="7">
+        <input type="button" class="button" onclick="number_button_click(this)" value="8">
+        <input type="button" class="button" onclick="number_button_click(this)" value="9">
+        <div class="button operator" id="div" data-operator>÷</div>
+        <input type="button" class="button" onclick="number_button_click(this)" value="1">
+        <div class="button" onclick="number_button_click()" data-number id="dotoperator">.</div>
+        <div class="button equal" data-equal>=</div> -->
+    </div>
+
+    <script>
+        // for darkmode toggle
+        var checkbox = document.querySelector('input[name=theme]');
+
+        //getting value from localstorage 
+        let on = ""
+        if (localStorage.getItem("darkmodeon") == "") {
+            on = ""
+        } else {
+            on = localStorage.getItem("darkmodeon")
+        }
+
+        //checking localstorage condition
+        if (on == "true") {
+            trans()
+            document.documentElement.setAttribute('data-theme', 'dark')
+            checkbox.checked = true
+        } else if (on == "false") {
+            trans()
+            document.documentElement.setAttribute('data-theme', 'light')
+            checkbox.checked = false
+        }
+
+        //setting up checkbox changes and localstorage setup
+        checkbox.addEventListener('change', function () {
+            if (this.checked) {
+                trans()
+                document.documentElement.setAttribute('data-theme', 'dark')
+                on = "true"
+                localStorage.setItem("darkmodeon", on)
+
+            } else {
+                trans()
+                document.documentElement.setAttribute('data-theme', 'light')
+                on = "false"
+                localStorage.setItem("darkmodeon", on)
+            }
+        })
+
+        //toggling transition class
+        function trans() {
+            document.documentElement.classList.add('transition');
+            window.setTimeout(() => {
+                document.documentElement.classList.remove('transition')
+            }, 1000)
+        }
+    </script>
+
+    <!-- <script src="script.js"></script> -->
+    <script>
+     function number_button_click(button){
+        // document.getElementsByClassName("button").innerHTML="button";
+        
+        
+        // var x = button.innerText;
+        // console.log(button.innerText);
+        // console.log(x);
+        // document.getElementById('calcdisplay').value = x;
+
+        var inputBox = document.getElementById('calcdisplay').value;
+        var newInput = button.innerText;
+        document.getElementById("calcdisplay").value = inputBox + newInput;
+     }
+     function operation_button_click(button){
+        var operator = document.getElementById('calcdisplay').value;
+        var newoperator = button.innerText;
+        if(operator[-1] == '+'){
+            operator = operator + '  0 ' + newoperator;
+        }
+        else if (operator[-1] == '-'){
+            operator = operator
+        }
+        else{
+            operator = operator + newoperator
+        }
+        document.getElementById('calcdisplay').value = operator + newoperator;
+
+        // var y = button.innerText;
+        // console.log(button.innerText);
+        // console.log(y);
+        // document.getElementById('calcdisplay').value = y;
+    }
+
+    </script>
+
+
+
+</body>
+
+</html>
